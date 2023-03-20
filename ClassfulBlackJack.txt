@@ -1,25 +1,74 @@
+import random
+
 class Player:
   def __init__(self):
     self.cards1 = []
     self.cards2 = [] #in the case of Split
+    self.cards1value = 0
+    self.cards2value = 0
     self.purse = 0
 
 class DealerAsPlayer:
   def __init__(self):
     self.cards = []
+    self.cardsvalue = 0
     self.bank = []
 
 class DealerAsDealer:
   def __init__(self):
-    self.presentdeck = [[v, s] for v in range(1,14) for s in ['C', 'S', 'D', 'H']]
+    self.presentdeck = [str(v)+s for v in range(1,14) for s in ['C', 'S', 'D', 'H']]
   def first_distribution(self):
-    return print(self.presentdeck)
+    dap.cards = random.choices(self.presentdeck, k=2)
+    for x in dap.cards:
+      self.presentdeck.remove(x)
+    player.cards1 = random.choices(self.presentdeck, k=2)
+    for x in player.cards1:
+      self.presentdeck.remove(x)
+    print(dap.cards)
+    print(player.cards1)
+  def twist(self, x):
+    if x == 'player':
+      player.cards1.append(''.join(random.choices(self.presentdeck, k=1)))
+      self.presentdeck.remove(player.cards1[-1])
+    if x == 'dealer':
+      dap.cards.append(''.join(random.choices(self.presentdeck, k=1)))
+      self.presentdeck.remove(dap.cards[-1])
+      
     
+    
+    
+                    
     
 
-class evaluator:
+class Evaluator:
   def __init__(self):
     pass
+  def evaluate(self):
+    for v in player.cards1:
+      if 1 < int(v[:-1]) < 11:
+          player.cards1value += int(v[:-1])
+      elif 10 < int(v[:-1]) <= 13:
+          player.cards1value += 10
+      elif int(v[:-1]) == 1:
+        if  player.cards1value <= 21:
+            player.cards1value += 11
+        elif  player.cards1value > 21:
+            player.cards1value += 1
+    for v in dap.cards:
+      if 1 < int(v[:-1]) < 11:
+        dap.cardsvalue += int(v[:-1])
+      elif 10 < int(v[:-1]) <= 13:
+        dap.cardsvalue += 10
+      elif int(v[:-1]) == 1:
+        if dap.cardsvalue <= 21:
+          dap.cardsvalue += 11
+        elif dap.cardsvalue > 21:
+          dap.cardsvalue += 1
+
+    print(dap.cards)
+    print(f"Dealer value is {dap.cardsvalue}.")
+    print(player.cards1)
+    print(f"Player value is {player.cards1value}.")
 
 class BetHandler:
   def __init__(self):
@@ -30,4 +79,10 @@ class PlayerDecisions:
     pass
 
 dad = DealerAsDealer()
+player = Player()
+dap = DealerAsPlayer()
+eval = Evaluator()
 dad.first_distribution()
+dad.twist('player')
+dad.twist('dealer')
+eval.evaluate()
