@@ -18,7 +18,7 @@ class DealerAsDealer:
   def __init__(self):
     self.presentdeck = [str(v)+s for v in range(1,14) for s in ['C', 'S', 'D', 'H']]
   def first_distribution(self):
-    dap.cards = random.choices(self.presentdeck, k=2)
+    dap.cards = random.choices(self.presentdeck, k=1)
     for x in dap.cards:
       self.presentdeck.remove(x)
     player.cards1 = random.choices(self.presentdeck, k=2)
@@ -33,13 +33,7 @@ class DealerAsDealer:
     if x == 'dealer':
       dap.cards.append(''.join(random.choices(self.presentdeck, k=1)))
       self.presentdeck.remove(dap.cards[-1])
-      
     
-    
-    
-                    
-    
-
 class Evaluator:
   def __init__(self):
     pass
@@ -78,11 +72,75 @@ class PlayerDecisions:
   def __init__(self):
     pass
 
+class Display:
+  def __init__(self):
+    pass
+  def standard_output(self, x):
+    output_hand = []
+    for s in x:
+      #CLUBS
+      if s == '1C':
+        output_hand.append('\u2663A')
+      elif s == '11C':
+        output_hand.append('\u2663J')
+      elif s == '12C':
+        output_hand.append('\u2663Q')
+      elif s == '13C':
+        output_hand.append('\u2663K')
+      elif s[-1] == 'C':
+        output_hand.append(f'{s[:-1]}\u2663')
+      #SPADES
+      if s == '1S':
+        output_hand.append('\u2660A')
+      elif s == '11S':
+        output_hand.append('\u2660J')
+      elif s == '12S':
+        output_hand.append('\u2660Q')
+      elif s == '13S':
+        output_hand.append('\u2660K')
+      elif s[-1] == 'S':
+        output_hand.append(f'{s[:-1]}\u2660')
+      #DIAMONDS
+      if s == '1D':
+        output_hand.append('\u2666A')
+      elif s == '11D':
+        output_hand.append('\u2666J')
+      elif s == '12D':
+        output_hand.append('\u2666Q')
+      elif s == '13D':
+        output_hand.append('\u2666K')
+      elif s[-1] == 'D':
+        output_hand.append(f'{s[1:]}\u2666')
+      #HEARTS
+      if s == '1H':
+        output_hand.append('\u2665A')
+      elif s == '11H':
+        output_hand.append('\u2665J')
+      elif s == '12H':
+        output_hand.append('\u2665Q')
+      elif s == '13H':
+        output_hand.append('\u2665K')
+      elif s[-1] == 'H':
+        output_hand.append(f'{s[:-1]}\u2665')
+    if x == player.cards1:
+      return print(f"Your hand is: {''.join(output_hand)}, valued at {player.cards1value}")
+      # if players_value > 21:
+      #   print("YOUR BUST!")
+    else:
+      return print(f"Dealer hand is: {''.join(output_hand)}, valued at {dap.cardsvalue}.")
+
+
+    #your cards and their value, dealer cards and their value, your bet, your purse
+  
 dad = DealerAsDealer()
 player = Player()
 dap = DealerAsPlayer()
 eval = Evaluator()
+display = Display()
 dad.first_distribution()
 dad.twist('player')
 dad.twist('dealer')
 eval.evaluate()
+display.standard_output(player.cards1)
+
+#This is the 
