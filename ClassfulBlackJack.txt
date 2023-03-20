@@ -3,15 +3,19 @@ class Player:
     self.cards1 = []
     self.cards2 = [] #in the case of Split
     self.purse = 0
-  def recieve_cards(x):
-    pass
 
-class Dealer:
+class DealerAsPlayer:
   def __init__(self):
     self.cards = []
     self.bank = []
-  def recieve_cards(x):
-    pass
+
+class DealerAsDealer:
+  def __init__(self):
+    self.presentdeck = [[v, s] for v in range(1,14) for s in ['C', 'S', 'D', 'H']]
+  def first_distribution(self):
+    return print(self.presentdeck)
+    
+    
 
 class evaluator:
   def __init__(self):
@@ -24,3 +28,6 @@ class BetHandler:
 class PlayerDecisions:
   def __init__(self):
     pass
+
+dad = DealerAsDealer()
+dad.first_distribution()
