@@ -1,0 +1,26 @@
+class Player:
+  def __init__(self):
+    self.cards1 = []
+    self.cards2 = [] #in the case of Split
+    self.purse = 0
+  def recieve_cards(x):
+    pass
+
+class Dealer:
+  def __init__(self):
+    self.cards = []
+    self.bank = []
+  def recieve_cards(x):
+    pass
+
+class evaluator:
+  def __init__(self):
+    pass
+
+class BetHandler:
+  def __init__(self):
+    pass
+
+class PlayerDecisions:
+  def __init__(self):
+    pass
