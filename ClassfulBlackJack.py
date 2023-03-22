@@ -1,4 +1,3 @@
-#loop dealer twist until >= 17
 import os
 import random
 
@@ -55,8 +54,7 @@ class Evaluator:
     pass
 
   def evaluate(self, x):
-    if x == 'initial_distribution' and len(player.cards1) <= 2 and len(
-        dap.cards) == 1:
+    if x == 'initial_distribution':
       for v in player.cards1:
         if 1 < int(v[:-1]) < 11:
           player.cards1value += int(v[:-1])
@@ -105,45 +103,44 @@ class Evaluator:
             dap.cardsvalue += 11
           elif dap.cardsvalue > 21:
             dap.cardsvalue += 1
-      return eval.valuechecker('dealer')
+      return eval.dealervaluechecker()
 
   def valuechecker(self, x):
     display.general_output()
-    if player.cards1value == 21 and x == 'initial_distribution' or x == 'player':
-      print('Blackjack, you win!')  #not true, dealer must not have 21
-    elif player.cards1value > 21 and x == 'initial_distribution' or x == 'player':
-      print('Bust!')
-    elif player.cards1value < 21 and x == 'initial_distribution' or x == 'player':
+    if player.cards1value < 21:
       x = input('Value is less than 21, do you wish to stick or twist?')
       if x == 'S':
         eval.dealervaluechecker()
       if x == 'T':
         dad.twist('player')
+    elif player.cards1value > 21:
+      print("Bust! You lose.")
 
   def dealervaluechecker(self):
-    #does recieve up to date value a
+    display.general_output()
     if dap.cardsvalue < 17:
       dad.twist('dealer')
-      #Recursion
       eval.dealervaluechecker()
     elif dap.cardsvalue >= 17:
       eval.valuecomparison()
 
   def valuecomparison(self):
     #next, sort bets and unicode output
-    if player.cards1value == dap.cardsvalue:
-      print('Tie')
+    if player.cards1value <=21 and dap.cardsvalue <= 21:
+      if player.cards1value == dap.cardsvalue:
+        print('Tie.')
       #print tie, distribute bets accordingly
-    elif player.cards1value > dap.cardsvalue:
-      print('Win')
-      #print victory, distribute bets accordingly
-    elif player.cards1value < dap.cardsvalue:
-      print('Loss')
-      #print lost, distribute bets
+      elif int(21 - player.cards1value) < int(21 - dap.cardsvalue):
+        print('You win.')
+        #print victory, distribute bets accordingly
+      elif int(21 - player.cards1value) > int(21 - dap.cardsvalue):
+        print('You lose.')
+        #print lost, distribute bets
+    if dap.cardsvalue > 21: #already accounted for player cards's value > 21
+      print("Dealer bust! You win.")
 
 
 class BetHandler:
-
   def __init__(self):
     pass
 
