@@ -35,39 +35,26 @@ class DealerAsDealer:
     player.cards1 = random.choices(self.presentdeck, k=2)
     for x in player.cards1:
       self.presentdeck.remove(x)
-    eval.evaluate()
+    eval.evaluate('initial_distribution')
 
   def twist(self, x):
     if x == 'player':
       player.cards1.append(''.join(random.choices(self.presentdeck, k=1)))
       self.presentdeck.remove(player.cards1[-1])
-      eval.evaluate()
+      eval.evaluate('player')
     if x == 'dealer':
       dap.cards.append(''.join(random.choices(self.presentdeck, k=1)))
       self.presentdeck.remove(dap.cards[-1])
+      eval.evaluate('dealer')
 
 
 class Evaluator:
   def __init__(self):
     pass
 
-  def evaluate(self):
-
-    if len(player.cards1) <= 2: #FOR FIRST DISTRIBUTION
+  def evaluate(self, x):
+    if x == 'initial_distribution' and len(player.cards1) <= 2 and len(dap.cards) == 1:
       for v in player.cards1:
-        if 1 < int(v[:-1]) < 11:
-          player.cards1value += int(v[:-1])
-        elif 10 < int(v[:-1]) <= 13:
-          player.cards1value += 10
-        elif int(v[:-1]) == 1:
-          if player.cards1value + 11 <= 21:
-            player.cards1value += 11
-          elif player.cards1value > 21:
-            player.cards1value += 1
-    elif len(player.cards1) > 2: #FOR TWIST
-      player_twist = player.cards1[-1]
-      player_twist = list(player_twist.split())
-      for v in player_twist:
         if 1 < int(v[:-1]) < 11:
           player.cards1value += int(v[:-1])
         elif 10 < int(v[:-1]) <= 13:
@@ -87,6 +74,32 @@ class Evaluator:
             dap.cardsvalue += 11
           elif dap.cardsvalue > 21:
             dap.cardsvalue += 1
+    elif x == 'player' and len(player.cards1) > 2: #FOR PLAYER TWIST
+      player_twist = player.cards1[-1]
+      player_twist = list(player_twist.split())
+      for v in player_twist:
+        if 1 < int(v[:-1]) < 11:
+          player.cards1value += int(v[:-1])
+        elif 10 < int(v[:-1]) <= 13:
+          player.cards1value += 10
+        elif int(v[:-1]) == 1:
+          if player.cards1value + 11 <= 21:
+            player.cards1value += 11
+          elif player.cards1value > 21:
+            player.cards1value += 1
+    elif x == 'dealer' and len(dap.cards) > 1:
+      dealer_twist = dap.cards[-1]
+      dealer_twist = list(dealer_twist.split())
+      for v in dealer_twist:
+        if 1 < int(v[:-1]) < 11:
+          dap.cardsvalue += int(v[:-1])
+        elif 10 < int(v[:-1]) <= 13:
+          dap.cardsvalue += 10
+        elif int(v[:-1]) == 1:
+          if dap.cardsvalue + 11 <= 21:
+            dap.cardsvalue += 11
+          elif dap.cardsvalue > 21:
+            dap.cardsvalue += 1 
     return eval.valuechecker()
 
   def valuechecker(self):
@@ -98,10 +111,25 @@ class Evaluator:
     elif player.cards1value < 21:
       x = input('Value is less than 21, do you wish to stick or twist?')
       if x == 'S':
-        pass
+        return eval.valuecomparison()
       if x == 'T':
         dad.twist('player')
       #Do you wish to hit or stick?
+
+  def valuecomparison(self):
+    if dap.cardsvalue < 17:
+      dad.twist('dealer')
+    elif dap.cardsvalue >= 17:
+      if player.cards1value == dap.cardsvalue:
+        pass
+        #print tie, distribute bets accordingly
+      elif player.cards1value > dap.cardsvalue:
+        pass
+        #print victory, distribute bets accordingly
+      elif player.cards1value < dap.cardsvalue:
+        pass
+        #print lost, distribute bets
+      
 
 
 class BetHandler:
