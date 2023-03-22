@@ -1,4 +1,3 @@
-#need a class to handle the flow of the game, and standard output
 import os
 import random
 
@@ -49,32 +48,45 @@ class DealerAsDealer:
 
 
 class Evaluator:
-
   def __init__(self):
     pass
 
   def evaluate(self):
-    #need to fix this, loops over again only want to loop new additions after twist
-    for v in player.cards1:
-      if 1 < int(v[:-1]) < 11:
-        player.cards1value += int(v[:-1])
-      elif 10 < int(v[:-1]) <= 13:
-        player.cards1value += 10
-      elif int(v[:-1]) == 1:
-        if player.cards1value + 11 <= 21:
-          player.cards1value += 11
-        elif player.cards1value > 21:
-          player.cards1value += 1
-    for v in dap.cards:
-      if 1 < int(v[:-1]) < 11:
-        dap.cardsvalue += int(v[:-1])
-      elif 10 < int(v[:-1]) <= 13:
-        dap.cardsvalue += 10
-      elif int(v[:-1]) == 1:
-        if dap.cardsvalue + 11 <= 21:
-          dap.cardsvalue += 11
-        elif dap.cardsvalue > 21:
-          dap.cardsvalue += 1
+
+    if len(player.cards1) <= 2: #FOR FIRST DISTRIBUTION
+      for v in player.cards1:
+        if 1 < int(v[:-1]) < 11:
+          player.cards1value += int(v[:-1])
+        elif 10 < int(v[:-1]) <= 13:
+          player.cards1value += 10
+        elif int(v[:-1]) == 1:
+          if player.cards1value + 11 <= 21:
+            player.cards1value += 11
+          elif player.cards1value > 21:
+            player.cards1value += 1
+    elif len(player.cards1) > 2: #FOR TWIST
+      player_twist = player.cards1[-1]
+      player_twist = list(player_twist.split())
+      for v in player_twist:
+        if 1 < int(v[:-1]) < 11:
+          player.cards1value += int(v[:-1])
+        elif 10 < int(v[:-1]) <= 13:
+          player.cards1value += 10
+        elif int(v[:-1]) == 1:
+          if player.cards1value + 11 <= 21:
+            player.cards1value += 11
+          elif player.cards1value > 21:
+            player.cards1value += 1
+      for v in dap.cards:
+        if 1 < int(v[:-1]) < 11:
+          dap.cardsvalue += int(v[:-1])
+        elif 10 < int(v[:-1]) <= 13:
+          dap.cardsvalue += 10
+        elif int(v[:-1]) == 1:
+          if dap.cardsvalue + 11 <= 21:
+            dap.cardsvalue += 11
+          elif dap.cardsvalue > 21:
+            dap.cardsvalue += 1
     return eval.valuechecker()
 
   def valuechecker(self):
@@ -84,7 +96,7 @@ class Evaluator:
     elif player.cards1value > 21:
       print('Bust!')
     elif player.cards1value < 21:
-      x = input('Do you wish to stick or twist?')
+      x = input('Value is less than 21, do you wish to stick or twist?')
       if x == 'S':
         pass
       if x == 'T':
@@ -197,3 +209,5 @@ display = Display()
 bet = BetHandler()
 # dad.first_distribution()
 bet.placingbet()
+
+#
