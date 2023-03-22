@@ -1,5 +1,7 @@
 import os
 import random
+import time
+import sys
 
 
 class Player:
@@ -107,7 +109,11 @@ class Evaluator:
 
   def valuechecker(self, x):
     display.general_output()
-    if player.cards1value < 21:
+    if player.cards1value == 21:
+      print("The dealer will now attempt 21 in as many or less cards.")
+      time.sleep(3)
+      eval.dealervaluechecker()
+    elif player.cards1value < 21:
       x = input('Value is less than 21, do you wish to stick or twist?')
       if x == 'S':
         eval.dealervaluechecker()
@@ -115,6 +121,7 @@ class Evaluator:
         dad.twist('player')
     elif player.cards1value > 21:
       print("Bust! You lose.")
+      bet.return_on_bet('Loss')
 
   def dealervaluechecker(self):
     display.general_output()
@@ -129,24 +136,47 @@ class Evaluator:
     if player.cards1value <=21 and dap.cardsvalue <= 21:
       if player.cards1value == dap.cardsvalue:
         print('Tie.')
-      #print tie, distribute bets accordingly
+        bet.return_on_bet('Tie')
+      elif player.cards1value == 21 and dap.cardsvalue != 21:
+        print("Blackjack win!")
+        bet.return_on_bet("Blackjack win")
+      elif player.cards1value != 21 and dap.cardsvalue == 21: 
+        print("Dealer has Blackjack! You lose.")
+        bet.return_on_bet('Loss')
+      elif player.cards1value == 21 and dap.cardsvalue == 21:
+        if len(player.cards1) < len (dap.cards):
+          print("You win! 21 in less cards than dealer.")
+          bet.return_on_bet('Win')
+        elif len(player.cards1) > len (dap.cards):
+          print("You lose! Dealer has 21 in less cards.")
+          bet.return_on_bet('Loss')
+        elif len(player.cards1) == len (dap.cards):
+          if len(player.cards1) == 2 and len (dap.cards) == 2:
+            print("Tie! Both you and dealer achieved blackjack!")
+            bet.return_on_bet('Tie')
+          else:
+            print("Tie! Both achieved 21 in same amount of cards.")
+            bet.return_on_bet('Tie')
       elif int(21 - player.cards1value) < int(21 - dap.cardsvalue):
         print('You win.')
+        bet.return_on_bet('Win')
         #print victory, distribute bets accordingly
       elif int(21 - player.cards1value) > int(21 - dap.cardsvalue):
         print('You lose.')
+        bet.return_on_bet('Loss')
         #print lost, distribute bets
     if dap.cardsvalue > 21: #already accounted for player cards's value > 21
       print("Dealer bust! You win.")
+      bet.return_on_bet('Win')
 
 
 class BetHandler:
   def __init__(self):
     pass
-
   def placingbet(self):
-    print(player.purse)
-    print(player.bet)
+    player.bet = 0 #reset to 0 following previous round
+    player.cards1value = 0 # create a separate class/method for reseting?
+    dap.cardsvalue = 0 
     x = input('Place your bet: ')
     if int(x) > player.purse:
       print("Bet too large, insufficient funds.")
@@ -155,19 +185,36 @@ class BetHandler:
       player.bet = int(x)
       player.purse = player.purse - player.bet
     return dad.first_distribution()
-
-
-class PlayerDecisions:
-
-  def __init__(self):
-    pass
-
+  def return_on_bet(self, x):
+    #reset bet to 0? 
+    if x == 'Tie':
+      player.purse = player.purse + player.bet
+      print(f"{player.bet}$ was returned to your purse.")
+      bet.placingbet()
+    if x == 'Win':
+      n = player.bet*2
+      player.purse + player.purse + n
+      print(f"You won {n}$, you now have {player.purse}$.")
+      bet.placingbet()
+    if x == 'Loss':
+      print(f"You lost {player.bet}$, you now have {player.purse}$.")
+      if player.purse <= 0:
+        d = input("You're broke! GAME OVER. Type R to Restart or Q to quit: ")
+        if d == 'R':
+          bet.placingbet()
+        if d == 'Q':
+          print("Adieu.")
+          sys.exit()
+      bet.placingbet()
+    if x == 'Blackjack win':
+      n = player.bet*2.5
+      player.purse = player.purse + n
+      print(f"You won {n}, you now have {player.purse}$.")
+      bet.placingbet()
 
 class Display:
-
   def __init__(self):
     pass
-
   def unicode_output(
       self, x):  #change to unicode formatting function, new standard output
     output_hand = []
@@ -216,17 +263,6 @@ class Display:
         output_hand.append('K\u2665')
       elif s[-1] == 'H':
         output_hand.append(f'{s[:-1]}\u2665')
-    # if x == player.cards1:
-    #   return print(
-    #     f"Your hand is: {''.join(output_hand)}, valued at {player.cards1value}"
-    #   )
-    #   # if players_value > 21:
-    #   #   print("YOUR BUST!")
-    # else:
-    #   return print(
-    #     f"Dealer hand is: {''.join(output_hand)}, valued at {dap.cardsvalue}.")
-
-    # #your cards and their value, dealer cards and their value, your bet, your purse
   def general_output(self):
     os.system('clear')
     print(f"""
@@ -246,3 +282,4 @@ bet = BetHandler()
 bet.placingbet()
 
 #
+
