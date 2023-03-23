@@ -1,3 +1,5 @@
+#when player twists and no bust, bet resets to 0 ... fix this!
+
 import os
 import random
 import time
@@ -11,8 +13,8 @@ class Player:
     self.cards2 = []  #in the case of Split
     self.cards1value = 0
     self.cards2value = 0
-    self.purse = 100
-    self.bet = 0
+    self.purse = 100.0
+    self.bet = 0.0
 
 
 class DealerAsPlayer:
@@ -80,7 +82,7 @@ class Evaluator:
       eval.valuechecker('initial_distribution')
     elif x == 'player' and len(player.cards1) > 2:  #FOR PLAYER TWIST
       player_twist = player.cards1[-1]
-      player_twist = list(player_twist.split())
+      player_twist = player_twist.split() #use list here?
       for v in player_twist:
         if 1 < int(v[:-1]) < 11:
           player.cards1value += int(v[:-1])
@@ -178,11 +180,14 @@ class BetHandler:
     player.cards1value = 0 # create a separate class/method for reseting?
     dap.cardsvalue = 0 
     x = input('Place your bet: ')
-    if int(x) > player.purse:
+    if float(x) > player.purse:
       print("Bet too large, insufficient funds.")
       return self.placingbet()
-    if int(x) < player.purse:
-      player.bet = int(x)
+    if x == 0:
+      print("Bet must have a value greater than 0.")
+      return self.placingbet()
+    elif float(x) < player.purse:
+      player.bet = float(x)
       player.purse = player.purse - player.bet
     return dad.first_distribution()
   def return_on_bet(self, x):
@@ -193,7 +198,7 @@ class BetHandler:
       bet.placingbet()
     if x == 'Win':
       n = player.bet*2
-      player.purse + player.purse + n
+      player.purse = player.purse + n
       print(f"You won {n}$, you now have {player.purse}$.")
       bet.placingbet()
     if x == 'Loss':
@@ -280,6 +285,3 @@ display = Display()
 bet = BetHandler()
 # dad.first_distribution()
 bet.placingbet()
-
-#
-
