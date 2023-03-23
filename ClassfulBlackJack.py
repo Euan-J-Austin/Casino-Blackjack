@@ -1,4 +1,4 @@
-#when player twists and no bust, bet resets to 0 ... fix this!
+#uniform floats to two decimal values
 
 import os
 import random
@@ -38,7 +38,7 @@ class DealerAsDealer:
       self.presentdeck.remove(x)
     player.cards1 = random.choices(self.presentdeck, k=2)
     for x in player.cards1:
-      self.presentdeck.remove(x)
+      self.presentdeck.remove(x) #ValueError, x not in list
     eval.evaluate('initial_distribution')
 
   def twist(self, x):
@@ -135,6 +135,7 @@ class Evaluator:
 
   def valuecomparison(self):
     #next, sort bets and unicode output
+    #what of the case where player blackjack, dealer goes bust? 
     if player.cards1value <=21 and dap.cardsvalue <= 21:
       if player.cards1value == dap.cardsvalue:
         print('Tie.')
@@ -169,7 +170,10 @@ class Evaluator:
         #print lost, distribute bets
     if dap.cardsvalue > 21: #already accounted for player cards's value > 21
       print("Dealer bust! You win.")
-      bet.return_on_bet('Win')
+      if len(player.cards1) > 2:
+        bet.return_on_bet('Win')
+      elif len(player.cards1) == 2:
+        bet.return_on_bet('Blackjack win')
 
 
 class BetHandler:
